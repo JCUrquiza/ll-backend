@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { Server } from './presentation/server';
 
 
 (() => {
@@ -8,16 +9,8 @@ import { PrismaClient } from '@prisma/client';
 
 async function main() {
 
-    const prisma = new PrismaClient();
-
-    const empresa = await prisma.empresas.create({
-        data: {
-            nombre: 'Consejo Mundial de Lucha Libre'
-        }
-    });
-
-    console.log({ empresa });
-
+    const server = new Server();
+    server.start();
 }
 
 
