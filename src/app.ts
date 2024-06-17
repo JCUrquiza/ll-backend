@@ -1,5 +1,23 @@
+import { PrismaClient } from '@prisma/client';
 
 
-console.log('Hola mundo');
+(() => {
+    main();
+})();
+
+
+async function main() {
+
+    const prisma = new PrismaClient();
+
+    const empresa = await prisma.empresas.create({
+        data: {
+            nombre: 'Consejo Mundial de Lucha Libre'
+        }
+    });
+
+    console.log({ empresa });
+
+}
 
 

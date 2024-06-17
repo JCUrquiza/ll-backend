@@ -13,6 +13,81 @@ datasource db {
   url      = env("POSTGRES_URL")
 }
 
+enum Genero {
+  Hombre
+  Mujer
+}
 
+model Empresas {
+  id     Int    @id @default(autoincrement())
+  nombre String
 
+  // Relations:
+  Luchadores Luchadores[]
+}
+
+model Luchadores {
+  id               Int      @id @default(autoincrement())
+  nombre           String
+  estilo           String
+  peso             Float?
+  altura           String?
+  ciudadNacimiento String?
+  aniosLuchador    Int?
+  genero           Genero
+  debut            DateTime?
+
+  empresa   Empresas @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  // Relations:
+  HistorialMascarasGanadas   HistorialMascarasGanadas[]
+  HistorialCabellerasGanadas HistorialCabellerasGanadas[]
+  HistorialCampeonatos       HistorialCampeonatos[]
+}
+
+model HistorialMascarasGanadas {
+  id Int @id @default(autoincrement())
+
+  luchadorGanador   Luchadores @relation(fields: [luchadorGanadorId], references: [id])
+  luchadorGanadorId Int
+
+  luchadorVencidoId Int
+
+  fechaLucha DateTime
+}
+
+model HistorialCabellerasGanadas {
+  id Int @id @default(autoincrement())
+
+  luchadorGanador   Luchadores @relation(fields: [luchadorGanadorId], references: [id])
+  luchadorGanadorId Int
+
+  luchadorVencidoId Int
+
+  fechaLucha DateTime
+}
+
+model Campeonatos {
+  id     Int    @id @default(autoincrement())
+  nombre String
+
+  // Relations
+  HistorialCampeonatos HistorialCampeonatos[]
+}
+
+model HistorialCampeonatos {
+  id           Int      @id @default(autoincrement())
+  tiempoInicio DateTime
+  tiempoFin    DateTime
+  defensas     Int
+
+  // Relations
+
+  luchador   Luchadores @relation(fields: [luchadorId], references: [id])
+  luchadorId Int
+
+  campeonato   Campeonatos @relation(fields: [campeonatoId], references: [id])
+  campeonatoId Int
+}
 
