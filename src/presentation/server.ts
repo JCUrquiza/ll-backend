@@ -1,8 +1,18 @@
 import express from 'express';
 
+interface Options {
+    port: number,
+}
+
 export class Server {
 
     private app = express();
+    private readonly port: number;
+
+    constructor(options: Options) {
+        const { port } = options;
+        this.port = port;
+    }
 
     async start() {
 
@@ -10,8 +20,8 @@ export class Server {
 
         // Public Folder
 
-        this.app.listen(3000, () => {
-            console.log(`Server running on port ${ 3000 }`);
+        this.app.listen(this.port, () => {
+            console.log(`Server running on port ${ this.port }`);
         });
     }
 

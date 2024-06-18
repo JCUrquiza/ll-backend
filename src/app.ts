@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import { Server } from './presentation/server';
+import { envs } from './config/envs';
 
 
 (() => {
@@ -9,7 +9,9 @@ import { Server } from './presentation/server';
 
 async function main() {
 
-    const server = new Server();
+    const server = new Server({
+        port: envs.PORT
+    });
     server.start();
 }
 
