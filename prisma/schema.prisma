@@ -18,18 +18,24 @@ enum Genero {
   Mujer
 }
 
+enum Estilo {
+  Rudo
+  Tecnico
+}
+
 model Empresas {
-  id     Int    @id @default(autoincrement())
-  nombre String
+  id          Int    @id @default(autoincrement())
+  nombre      String
+  abreviatura String
 
   // Relations:
   Luchadores Luchadores[]
 }
 
 model Luchadores {
-  id               Int      @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   nombre           String
-  estilo           String
+  estilo           Estilo
   peso             Float?
   altura           String?
   ciudadNacimiento String?
@@ -90,4 +96,3 @@ model HistorialCampeonatos {
   campeonato   Campeonatos @relation(fields: [campeonatoId], references: [id])
   campeonatoId Int
 }
-

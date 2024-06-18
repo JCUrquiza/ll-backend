@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { LuchadoresRoutes } from './luchadores/routes';
+import { EmpresasRoutes } from './empresas/routes';
 
 export class AppRouter {
 
@@ -7,6 +8,7 @@ export class AppRouter {
 
         const router = Router();
 
+        router.use('/api/empresas', EmpresasRoutes.routes );
         router.use('/api/luchadores', LuchadoresRoutes.routes );
 
         return router;
