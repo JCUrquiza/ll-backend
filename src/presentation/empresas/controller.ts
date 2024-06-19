@@ -4,7 +4,6 @@ import { prisma } from '../../data/postgres';
 
 export class EmpresasController {
     
-
     constructor() {}
 
 
