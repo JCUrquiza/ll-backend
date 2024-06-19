@@ -31,6 +31,8 @@ export class EmpresasController {
 
     public getCompanies = async(req: Request, res: Response) => {
         const companies = await prisma.empresas.findMany();
+        if ( companies.length === 0 ) return res.status(404).json('No hay empresas que mostrar');
+
         res.json({ empresas: companies });
     }
 

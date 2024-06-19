@@ -9,8 +9,8 @@ export class LuchadoresRoutes {
         const router = Router();
         const luchadoresController = new LuchadoresController();
 
-        router.get('/', luchadoresController.getLuchadores);
         router.post('/create', luchadoresController.createLuchador);
+        router.get('/list', luchadoresController.getLuchadores);
 
         return router;
     }
