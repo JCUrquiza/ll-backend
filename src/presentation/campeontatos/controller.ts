@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
-import { CreateChampionshipDto } from '../../domain';
+import { CreateChampionshipDto, UpdateChampionshipDto } from '../../domain';
 
 
 export class ChampionshipController {
@@ -9,17 +9,16 @@ export class ChampionshipController {
 
     public createChampionship = async(req: Request, res: Response) => {
 
-        // const { nombre, rangoPeso, anioFundacion } = req.body;
+        const { nombre } = req.body;
         const [error, createChampionshipDto] = CreateChampionshipDto.create(req.body);
         if ( error ) return res.status(400).json({ error });
 
-        // const championshipExist = await prisma.campeonatos.findFirst({
-        //     where: {
-        //         nombre
-        //     }
-        // });
-        // if ( championshipExist ) return res.status(400).json('Este campeonato ya existe');
-
+        const championshipExist = await prisma.campeonatos.findFirst({
+            where: {
+                nombre
+            }
+        });
+        if ( championshipExist ) return res.status(400).json('Este campeonato ya existe');
 
         const championship = await prisma.campeonatos.create({
             data: createChampionshipDto!
@@ -39,18 +38,17 @@ export class ChampionshipController {
     public updateChampionship = async(req: Request, res: Response) => {
 
         const id = +req.params.id;
-        if ( isNaN(id) ) return res.status(400).json({ error: 'ID argument is not a number' });
-
+        const [error, updateChampionshipDto] = UpdateChampionshipDto.create({...req.body, id});
+        if ( error) res.status(400).json({ error });
+        
         const champion = await prisma.campeonatos.findFirst({
             where: { id }
         });
         if ( !champion ) return res.status(404).json({ error: 'Champion with that Id not found' });
 
-        const { nombre, rangoPeso, anioFundacion } = req.body;
-
         const updatedChampion = await prisma.campeonatos.update({
             where: { id },
-            data: { nombre, rangoPeso, anioFundacion }
+            data: updateChampionshipDto!.values
         });
 
         res.json( updatedChampion );
