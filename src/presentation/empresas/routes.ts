@@ -11,6 +11,8 @@ export class EmpresasRoutes {
 
         router.post('/create', empresasController.createCompany);
         router.get('/list', empresasController.getCompanies);
+        router.put('/update/:id', empresasController.updateCompany);
+        router.delete('/delete/:id', empresasController.deleteCompany);
 
         return router;
     }
