@@ -40,21 +40,27 @@ export class ChampionshipController {
 
     public updateChampionship = async(req: Request, res: Response) => {
 
-        const id = +req.params.id;
-        const [error, updateChampionshipDto] = UpdateChampionshipDto.create({...req.body, id});
-        if ( error) res.status(400).json({ error });
+        try {
+            const id = +req.body.id;
+            const [error, updateChampionshipDto] = UpdateChampionshipDto.create({...req.body, id});
+            if ( error) return res.status(400).json({ error });
         
-        const champion = await prisma.campeonatos.findFirst({
-            where: { id }
-        });
-        if ( !champion ) return res.status(404).json({ error: 'Champion with that Id not found' });
+            const champion = await prisma.campeonatos.findFirst({
+                where: { id }
+            });
+            if ( !champion ) return res.status(404).json({ error: 'Champion with that Id not found' });
 
-        const updatedChampion = await prisma.campeonatos.update({
-            where: { id },
-            data: updateChampionshipDto!.values
-        });
+            const updatedChampion = await prisma.campeonatos.update({
+                where: { id },
+                data: updateChampionshipDto!.values
+            });
 
-        res.json( updatedChampion );
+            return res.json( updatedChampion );
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: 'An error occurred while processing your request' });
+        }
+
     }
 
 

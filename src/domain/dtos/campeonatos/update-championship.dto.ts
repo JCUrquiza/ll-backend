@@ -20,15 +20,11 @@ export class UpdateChampionshipDto {
 
     static create( props: {[key: string]: any} ): [string?, UpdateChampionshipDto?] {
 
-        const { id, nombre, rangoPeso, anioFundacion } = props;
+        const { nombre, rangoPeso, anioFundacion, id } = props;
 
         if ( !id || isNaN( Number(id) ) ) {
-            return ['Id must be a valid number', undefined]
+            return ['Id must be a valid number', undefined];
         }
-
-        // if ( !nombre ) return ['Name is required', undefined];
-        // if ( !rangoPeso ) return ['Rangopeso is required', undefined];
-        // if ( !anioFundacion ) return ['Year of fundation is required', undefined];
 
         return [undefined, new UpdateChampionshipDto(id, nombre, rangoPeso, anioFundacion)];
     }

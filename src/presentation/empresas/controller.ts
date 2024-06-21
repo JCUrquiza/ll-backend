@@ -66,10 +66,9 @@ export class EmpresasController {
             const id = +req.params.id
             if ( !id || isNaN(id) ) return res.status(404).json({ error: 'Missing ID' });
     
-            const companyDeleted = await prisma.empresas.delete({
+            await prisma.empresas.delete({
                 where: { id }
             });
-            if ( !companyDeleted ) return res.status(404).json({ error: 'Company not found' });
     
             return res.json({ message: 'Company successfully deleted' });
         } catch (error: any) {
