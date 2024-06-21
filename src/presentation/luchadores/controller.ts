@@ -37,11 +37,58 @@ export class LuchadoresController {
         return res.json( luchador );
     }
 
+
     public getLuchadores = async(req: Request, res: Response) => {
         const luchadores = await prisma.luchadores.findMany();
         if ( luchadores.length === 0 ) return res.status(404).json('No hay luchadores que mostrar');
 
-        res.json({ luchadores });
+        return res.json({ luchadores });
+    }
+
+
+    public updateLuchador = async(req: Request, res: Response) => {
+
+        try {
+            const id = +req.params.id;
+            if ( !id || isNaN(id) ) return res.status(400).json({ message: 'Id not valid' });
+
+            const luchador = await prisma.luchadores.findUnique({
+                where: { id }
+            });
+            if ( !luchador ) return res.status(400).json({ message: `Wrestler with id ${ id } not exist` });
+
+            const { nombre, estilo, peso, altura, ciudadNacimiento, aniosLuchador, genero, debut } = req.body;
+            const wrestlerUpdated = await prisma.luchadores.update({
+                where: { id },
+                data: { nombre, estilo, peso, altura, ciudadNacimiento, aniosLuchador, genero, debut }
+            });
+
+            return res.json( wrestlerUpdated );
+
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error });
+        }
+
+    }
+
+
+    public deleteLuchador = async(req: Request, res: Response) => {
+
+        try {
+            const id = +req.params.id;
+            if ( !id || isNaN(id) ) return res.status(400).json({ message: 'Id not valid' });
+
+            await prisma.luchadores.delete({
+                where: { id }
+            });
+
+            return res.json({ messaje: 'Wrestler successfully deleted' });
+        } catch (error: any) {
+            console.log(error);
+            return res.status(500).json({ message: error.meta.cause });
+        }        
+
     }
 
 }
