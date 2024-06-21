@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
 import { CreateChampionshipDto, UpdateChampionshipDto } from '../../domain';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 
 export class ChampionshipController {
@@ -27,6 +28,7 @@ export class ChampionshipController {
         return res.json( championship );
     }
 
+
     public getChampionships = async(req: Request, res: Response) => {
 
         const championships = await prisma.campeonatos.findMany();
@@ -34,6 +36,7 @@ export class ChampionshipController {
 
         return res.json({ championships })
     }
+
 
     public updateChampionship = async(req: Request, res: Response) => {
 
@@ -53,6 +56,29 @@ export class ChampionshipController {
 
         res.json( updatedChampion );
     }
+
+
+    public deleteChampionship = async(req: Request, res: Response) => {
+
+        try {
+            const id = +req.params.id;
+            if ( !id || isNaN(id) ) return res.status(404).json({ error: 'Id not valid' });
+
+            await prisma.campeonatos.delete({
+                where: { id }
+            });
+            
+            return res.json({ message: 'Championship successfully deleted' });
+        } catch (error) {
+            if ( (error as PrismaClientKnownRequestError).code === 'P2025' ) {
+                return res.status(400).json({ error: 'Championship not found' });
+            }
+            
+            return res.status(500).json({ error: 'Contacte al administrador' });
+        }
+
+    }
+
 
 }
 

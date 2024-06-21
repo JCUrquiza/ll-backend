@@ -12,6 +12,7 @@ export class ChampionshipRoutes {
         router.post('/create', championshipController.createChampionship);
         router.get('/list', championshipController.getChampionships);
         router.put('/update', championshipController.updateChampionship);
+        router.delete('/delete/:id', championshipController.deleteChampionship);
 
         return router;
     }
