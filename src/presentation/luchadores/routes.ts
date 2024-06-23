@@ -12,6 +12,7 @@ export class LuchadoresRoutes {
         router.post('/create', luchadoresController.createLuchador);
         router.get('/list', luchadoresController.getLuchadores);
         router.put('/edit/:id', luchadoresController.updateLuchador);
+        router.delete('/delete/all', luchadoresController.deleteAllWrestlers);
         router.delete('/delete/:id', luchadoresController.deleteLuchador);
 
         return router;

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
-import { CreateWrestlerDto } from '../../domain';
+import { CreateWrestlerDto, UpdateWrestlerDto } from '../../domain';
 
 
 export class LuchadoresController {
@@ -72,7 +72,7 @@ export class LuchadoresController {
 
     public getLuchadores = async(req: Request, res: Response) => {
         const luchadores = await prisma.luchadores.findMany();
-        if ( luchadores.length === 0 ) return res.status(404).json('No hay luchadores que mostrar');
+        if ( luchadores.length === 0 ) return res.status(404).json({ message: 'No hay luchadores que mostrar' });
 
         return res.json({ luchadores });
     }
@@ -89,10 +89,13 @@ export class LuchadoresController {
             });
             if ( !luchador ) return res.status(400).json({ message: `Wrestler with id ${ id } not exist` });
 
-            const { nombre, estilo, peso, altura, ciudadNacimiento, aniosLuchador, genero, debut } = req.body;
+            const [ error, updateWrestlerDto ] = UpdateWrestlerDto.create( req.body );
+            if ( error ) res.status(400).json({ error });
+
+            // const { nombre, estilo, peso, altura, ciudadNacimiento, aniosLuchador, genero, debut } = req.body;
             const wrestlerUpdated = await prisma.luchadores.update({
                 where: { id },
-                data: { nombre, estilo, peso, altura, ciudadNacimiento, aniosLuchador, genero, debut }
+                data: updateWrestlerDto!.values
             });
 
             return res.json( wrestlerUpdated );
@@ -122,6 +125,18 @@ export class LuchadoresController {
         }        
 
     }
+
+
+    public deleteAllWrestlers = async(req: Request, res: Response) => {
+        try {
+            await prisma.luchadores.deleteMany();
+            return res.json({ message: 'Wrestlers deleted successfully' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json('Something was wrong!!');
+        }
+    }
+
 
 }
 
