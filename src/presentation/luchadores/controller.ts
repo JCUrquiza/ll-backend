@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
+import { CreateWrestlerDto } from '../../domain';
 
 
 export class LuchadoresController {
@@ -8,33 +9,64 @@ export class LuchadoresController {
 
     public createLuchador = async(req: Request, res: Response) => {
 
-        const { nombre, estilo, genero, empresa } = req.body;
-        if ( !nombre ) return res.status(404).json('No permitido, es necesario indicar el nombre');
-        if ( !estilo ) return res.status(404).json('No permitido, es necesario indicar el estilo');
-        if ( !genero ) return res.status(404).json('No permitido, es necesario indicar el genero');
-        if ( !empresa ) return res.status(404).json('No permitido, es necesario indicar la empresa');
+        try {
 
-        const empresaBusqueda = await prisma.empresas.findFirst({
-            where: {
-                abreviatura: empresa
-            }
-        });
-        if ( !empresaBusqueda ) return res.status(404).json({ error: 'Company not found' }); 
+            const { nombre, estilo, genero, empresa, peso, altura, ciudadNacimiento, aniosLuchador, debut } = req.body;
 
-        const luchador = await prisma.luchadores.create({
-            data: {
-                nombre,
-                estilo,
-                genero,
-                empresa: {
-                    connect: {
-                        id: empresaBusqueda.id
-                    }
+            const [error, createWrestlerDto] = CreateWrestlerDto.create( req.body );
+            if ( error ) return res.status(400).json({ message: error });
+
+            // Se busca primero la empresa a la que se quiere agregar:
+            const empresaBusqueda = await prisma.empresas.findFirst({
+                where: {
+                    abreviatura: empresa
+                }
+            });
+            if ( !empresaBusqueda ) return res.status(404).json({ error: 'Company not found' });
+
+            // Se busca si el luchador ya existe:
+            const wrestlerExist = await prisma.luchadores.findFirst({
+                where: {
+                    nombre
+                }
+            });
+            if ( wrestlerExist ) return res.status(400).json({ message: 'Wrestler already exist' });
+
+            // Validación de fecha:
+            let newDebut = debut;
+            if ( debut ) {
+                newDebut = new Date( debut );
+                console.log({ newDebut });
+                if ( newDebut.toString() === 'Invalid Date' ) {
+                    return res.status(400).json({ message: 'Invalid date Debut, must be a correct date' })
                 }
             }
-        });
-        
-        return res.json( luchador );
+
+            // Crear el luchador utilizando el DTO y conectando a la empresa:
+            const luchador = await prisma.luchadores.create({
+                data: {
+                    nombre: createWrestlerDto!.nombre,
+                    estilo,
+                    genero,
+                    peso,
+                    altura,
+                    ciudadNacimiento,
+                    aniosLuchador,
+                    debut: newDebut,
+                    empresa: {
+                        connect: {
+                            id: empresaBusqueda.id
+                        }
+                    }
+                }
+            });
+
+            return res.status(201).json({ luchador });
+        } catch (error) {
+            console.error('Error en la creación del luchador:', error);
+            return res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud' });
+        }
+
     }
 
 
