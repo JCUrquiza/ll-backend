@@ -10,7 +10,7 @@ export class HistoryMaskWinsRoutes {
         const historyMaskWins = new HistoryMascarasController();
 
         router.post('/create', historyMaskWins.createMaskWins);
-        router.post('/details/:id', historyMaskWins.historyFightMaskDetails);
+        router.get('/details/:id', historyMaskWins.historyFightMaskDetails);
 
         return router;
     }

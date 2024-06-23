@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
+import { CreateHistoryMaskDto } from '../../domain';
 
 
 export class HistoryMascarasController {
@@ -10,47 +11,33 @@ export class HistoryMascarasController {
 
         try {
 
-            const { idWrestlerWins, idWrestlerLoser, dateFight } = req.body;
+            const [error, createHistoryMaskDto] = CreateHistoryMaskDto.create( req.body );
+            if ( error ) return res.status(400).json({ error });
 
-            const idWrestlerW = +idWrestlerWins;
-            const idWrestlerL = +idWrestlerLoser;
-
-            if ( !idWrestlerWins ) return res.status(400).json({ error: 'idWrestlerWins is required' });
-            if ( !idWrestlerLoser ) return res.status(400).json({ error: 'idWrestlerLoser is required' });
-            
             const wrestlerWins = await prisma.luchadores.findUnique({
-                where: { id: idWrestlerW }
+                where: { id: createHistoryMaskDto?.idWrestlerWins }
             });
-            if ( !wrestlerWins ) return res.status(404). json({ error: 'Wrestler wins not found' });
-            
+            if ( !wrestlerWins ) return res.status(404). json({ error: 'Wrestler wins not found' });            
             const wrestlerLoser = await prisma.luchadores.findUnique({
-                where: { id: idWrestlerL }
+                where: { id: createHistoryMaskDto?.idWrestlerLoser }
             });
             if ( !wrestlerLoser ) return res.status(404). json({ error: 'Wrestler loser not found' });
-
-
-            // Validar fecha en DTO*
-            if ( !dateFight ) return res.status(400).json({ error: 'dateFight is required' });
-            const fightDate = new Date(dateFight);
-            if (isNaN(fightDate.getTime())) {
-                return res.status(400).json({ error: 'dateFight must be a valid Date' });
-            }
 
             // Verificar que esa lucha no haya sido registrada antes
             const historyMaskCreated = await prisma.historialMascarasGanadas.findFirst({
                 where: {
-                    luchadorGanadorId: wrestlerWins.id,
-                    luchadorVencidoId: wrestlerLoser.id,
-                    fechaLucha: fightDate.toISOString()
+                    luchadorGanadorId: createHistoryMaskDto?.idWrestlerWins,
+                    luchadorVencidoId: createHistoryMaskDto?.idWrestlerLoser,
+                    fechaLucha: createHistoryMaskDto?.dateFight
                 }
             });
             if ( historyMaskCreated ) return res.status(400).json({ error: 'Fight already created' });
 
             await prisma.historialMascarasGanadas.create({
                 data: {
-                    luchadorGanadorId: wrestlerWins.id,
-                    luchadorVencidoId: wrestlerLoser.id,
-                    fechaLucha: fightDate.toISOString()
+                    luchadorGanadorId: createHistoryMaskDto!.idWrestlerWins,
+                    luchadorVencidoId: createHistoryMaskDto!.idWrestlerLoser,
+                    fechaLucha: createHistoryMaskDto!.dateFight
                 }
             });
 

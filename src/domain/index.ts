@@ -9,4 +9,6 @@ export * from './dtos/companies/update-company.dto';
 export * from './dtos/luchadores/create-wreslter.dto';
 export * from './dtos/luchadores/update-wrestler.dto';
 
+export * from './dtos/historialMascaras/create-historyMask.dto';
+
 
