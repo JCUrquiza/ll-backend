@@ -78,6 +78,25 @@ export class LuchadoresController {
     }
 
 
+    public getLuchadoresByRegion = async(req: Request, res: Response) => {
+
+        try {
+            const { region } = req.body;
+    
+            const wrestlerByRegion = await prisma.luchadores.findMany({
+                where: { ciudadNacimiento: region }
+            });
+            if ( wrestlerByRegion.length === 0 ) return res.status(404).json({ error: 'We don´t have records' });
+
+            return res.json( wrestlerByRegion )
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error });
+        }
+
+    }
+
+
     public updateLuchador = async(req: Request, res: Response) => {
 
         try {

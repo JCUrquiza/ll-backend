@@ -115,16 +115,21 @@ export class HistoryMascarasController {
         });
 
         return res.json( historyUpdated );
-        // return res.json({ message: 'Record successfully updated' });
     }
 
 
-    public allRecordsMaskWins = async(res: Response) => {
+    public allRecordsMaskWins = async(req: Request, res: Response) => {
 
-        const records = await prisma.historialMascarasGanadas.findMany();
-        if ( records.length === 0 ) return res.status(404).json({ error: 'Not records found' });
+        try {
+            const records = await prisma.historialMascarasGanadas.findMany();
+            if ( records.length === 0 ) return res.status(404).json({ error: 'Not records found' });
+    
+            return res.json({ records });    
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error });
+        }
 
-        return res.json({ records });
     }
 
 
@@ -143,6 +148,19 @@ export class HistoryMascarasController {
             if ( error.code === 'P2025') {
                 return res.status(404).json({ error: error.meta.cause });
             }
+            return res.status(500).json({ error });
+        }
+
+    }
+
+
+    public deleteAllRecords = async(req: Request, res: Response) => {
+
+        try {
+            await prisma.historialMascarasGanadas.deleteMany();
+            return res.json({ message: 'All records was deleted successfully' });            
+        } catch (error) {
+            console.log(error);
             return res.status(500).json({ error });
         }
 
