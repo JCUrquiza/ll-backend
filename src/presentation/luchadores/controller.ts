@@ -85,12 +85,12 @@ export class LuchadoresController {
             if (error) return res.status(400).json({ error });
             // const { region } = req.body;
     
-            const wrestlerByRegion = await prisma.luchadores.findMany({
+            const wrestlerByParams = await prisma.luchadores.findMany({
                 where: readWrestlerDto?.values
             });
-            if ( wrestlerByRegion.length === 0 ) return res.status(404).json({ error: 'We don´t have records' });
+            if ( wrestlerByParams.length === 0 ) return res.status(404).json({ error: 'We don´t have records' });
 
-            return res.json( wrestlerByRegion )
+            return res.json( wrestlerByParams )
         } catch (error) {
             console.log(error);
             return res.status(500).json({ error });

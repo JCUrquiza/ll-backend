@@ -41,7 +41,7 @@ export class HistoryMascarasController {
                 }
             });
 
-            return res.json({ message: 'Fight history created successfully' });
+            return res.json({ message: 'Fight history mask created successfully' });
         } catch (error) {
             console.log(error);
             return res.status(500).json({ error });
@@ -121,10 +121,29 @@ export class HistoryMascarasController {
     public allRecordsMaskWins = async(req: Request, res: Response) => {
 
         try {
-            const records = await prisma.historialMascarasGanadas.findMany();
+            const records = await prisma.historialMascarasGanadas.findMany({
+                include: {
+                    luchadorGanador: true
+                }
+            });
             if ( records.length === 0 ) return res.status(404).json({ error: 'Not records found' });
-    
-            return res.json({ records });    
+
+            const luchadoresVencidosPromise = records.map( record => {
+                return prisma.luchadores.findUnique({
+                    where: { id: record.luchadorVencidoId }
+                });
+            });
+
+            const luchadoresVencidos = await Promise.all( luchadoresVencidosPromise );
+
+            const result = records.map((record, index) => ({
+                id: record.id,
+                fechaLucha: record.fechaLucha,
+                luchadorGanador: record.luchadorGanador,
+                luchadorVencido: luchadoresVencidos[index]
+            }));
+
+            return res.json( result );
         } catch (error) {
             console.log(error);
             return res.status(500).json({ error });
