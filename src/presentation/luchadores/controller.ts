@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
-import { CreateWrestlerDto, UpdateWrestlerDto } from '../../domain';
+import { CreateWrestlerDto, ReadWrestlerDto, UpdateWrestlerDto } from '../../domain';
 
 
 export class LuchadoresController {
@@ -78,13 +78,15 @@ export class LuchadoresController {
     }
 
 
-    public getLuchadoresByRegion = async(req: Request, res: Response) => {
+    public getLuchadoresByParameters = async(req: Request, res: Response) => {
 
         try {
-            const { region } = req.body;
+            const [error, readWrestlerDto] = ReadWrestlerDto.create( req.body );
+            if (error) return res.status(400).json({ error });
+            // const { region } = req.body;
     
             const wrestlerByRegion = await prisma.luchadores.findMany({
-                where: { ciudadNacimiento: region }
+                where: readWrestlerDto?.values
             });
             if ( wrestlerByRegion.length === 0 ) return res.status(404).json({ error: 'We don´t have records' });
 
@@ -108,7 +110,7 @@ export class LuchadoresController {
             });
             if ( !luchador ) return res.status(400).json({ message: `Wrestler with id ${ id } not exist` });
 
-            const [ error, updateWrestlerDto ] = UpdateWrestlerDto.create( req.body );
+            const [error, updateWrestlerDto] = UpdateWrestlerDto.create( req.body );
             if ( error ) res.status(400).json({ error });
 
             // const { nombre, estilo, peso, altura, ciudadNacimiento, aniosLuchador, genero, debut } = req.body;

@@ -11,9 +11,7 @@ export class LuchadoresRoutes {
 
         router.post('/create', luchadoresController.createLuchador);
         router.get('/list', luchadoresController.getLuchadores);
-
-        router.post('/list/byRegion', luchadoresController.getLuchadoresByRegion);
-
+        router.post('/list/byParameters', luchadoresController.getLuchadoresByParameters);
         router.put('/edit/:id', luchadoresController.updateLuchador);
         router.delete('/delete/all', luchadoresController.deleteAllWrestlers);
         router.delete('/delete/:id', luchadoresController.deleteLuchador);
