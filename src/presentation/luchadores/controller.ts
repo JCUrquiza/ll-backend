@@ -121,6 +121,9 @@ export class LuchadoresController {
             return res.json({ messaje: 'Wrestler successfully deleted' });
         } catch (error: any) {
             console.log(error);
+            if ( error.code === 'P2025') {
+                return res.status(404).json({ error: error.meta.cause });
+            }
             return res.status(500).json({ message: error.meta.cause });
         }        
 

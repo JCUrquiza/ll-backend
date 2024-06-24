@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
-import { CreateHistoryMaskDto } from '../../domain';
+import { CreateHistoryMaskDto, UpdateHistoryMaskDto } from '../../domain';
 
 
 export class HistoryMascarasController {
 
     constructor() {}
 
-    public createMaskWins = async(req: Request, res: Response) => {
+    public createRecordMaskWins = async(req: Request, res: Response) => {
 
         try {
 
@@ -50,14 +50,14 @@ export class HistoryMascarasController {
     }
 
 
-    public historyFightMaskDetails = async(req: Request, res: Response) => {
+    public recordMaskDetails = async(req: Request, res: Response) => {
 
         try {
             
-            const idWrestlerWins = +req.params.id;
+            const idFightWins = +req.params.id;
 
             const historyMaskWinsByWrestler = await prisma.historialMascarasGanadas.findMany({
-                where: { luchadorGanadorId: idWrestlerWins },
+                where: { id: idFightWins },
                 include: {
                     luchadorGanador: true
                 }
@@ -82,6 +82,67 @@ export class HistoryMascarasController {
             return res.json( result );
         } catch (error) {
             console.log(error);
+            return res.status(500).json({ error });
+        }
+
+    }
+
+    
+    public updateRecordMask = async(req: Request, res: Response) => {
+
+        const idRecord = +req.params.id;
+        const [error, updateHistoryMaskDto] = UpdateHistoryMaskDto.create( req.body );
+        if ( error ) return res.status(400).json({ error });
+
+        const record = await prisma.historialMascarasGanadas.findUnique({
+            where: { id: idRecord }
+        });
+        if ( !record  ) return res.status(404).json({ error: 'Record not found' });
+
+        // Verify id´s wrestler wins and lose exist
+        const wrestlerWinsExist = await prisma.luchadores.findUnique({
+            where: { id: updateHistoryMaskDto?.luchadorGanadorId }
+        });
+        if ( !wrestlerWinsExist ) return res.status(404).json({ error: 'Wrestler wins doesn´t exist' });
+        const wrestlerLoserExist = await prisma.luchadores.findUnique({
+            where: { id: updateHistoryMaskDto?.luchadorVencidoId }
+        });
+        if ( !wrestlerLoserExist ) return res.status(404).json({ error: 'Wrestler loser doesn´t exist' });
+
+        const historyUpdated = await prisma.historialMascarasGanadas.update({
+            where: { id: idRecord },
+            data: updateHistoryMaskDto!.values
+        });
+
+        return res.json( historyUpdated );
+        // return res.json({ message: 'Record successfully updated' });
+    }
+
+
+    public allRecordsMaskWins = async(res: Response) => {
+
+        const records = await prisma.historialMascarasGanadas.findMany();
+        if ( records.length === 0 ) return res.status(404).json({ error: 'Not records found' });
+
+        return res.json({ records });
+    }
+
+
+    public deleteRecordMaskWins = async(req: Request, res: Response) => {
+
+        try {
+            const idRecord = +req.params.id;
+
+            await prisma.historialMascarasGanadas.delete({
+                where: { id: idRecord }
+            });
+            
+            return res.json({ message: 'Record deleted successfully!!' });
+        } catch (error: any) {
+            console.log(error);
+            if ( error.code === 'P2025') {
+                return res.status(404).json({ error: error.meta.cause });
+            }
             return res.status(500).json({ error });
         }
 

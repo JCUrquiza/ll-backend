@@ -9,8 +9,11 @@ export class HistoryMaskWinsRoutes {
         const router = Router();
         const historyMaskWins = new HistoryMascarasController();
 
-        router.post('/create', historyMaskWins.createMaskWins);
-        router.get('/details/:id', historyMaskWins.historyFightMaskDetails);
+        router.post('/create', historyMaskWins.createRecordMaskWins);
+        router.get('/details/:id', historyMaskWins.recordMaskDetails);
+        router.put('/update/:id', historyMaskWins.updateRecordMask);
+        router.get('/list', historyMaskWins.allRecordsMaskWins);
+        router.delete('/delete/:id', historyMaskWins.deleteRecordMaskWins);
 
         return router;
     }
