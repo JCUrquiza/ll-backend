@@ -42,6 +42,8 @@ export class ChampionshipController {
 
         try {
             const id = +req.body.id;
+            if ( isNaN(id) ) return res.status(400).json({ error: `ID argument is not a number` });
+
             const [error, updateChampionshipDto] = UpdateChampionshipDto.create({...req.body, id});
             if ( error) return res.status(400).json({ error });
         
@@ -68,7 +70,7 @@ export class ChampionshipController {
 
         try {
             const id = +req.params.id;
-            if ( !id || isNaN(id) ) return res.status(404).json({ error: 'Id not valid' });
+            if ( isNaN(id) ) return res.status(400).json({ error: `ID argument is not a number` });
 
             await prisma.campeonatos.delete({
                 where: { id }

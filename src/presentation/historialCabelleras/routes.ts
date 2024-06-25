@@ -10,6 +10,8 @@ export class HistoryHairWinsRoutes {
         const historyHairWins = new HistoryHairController();
 
         router.post('/create', historyHairWins.createRecordHairWins);
+        router.get('/list', historyHairWins.getRecordHairWinsAll);
+        router.put('/update/:id', historyHairWins.updateRecordHairWins);
 
         return router;
     }
