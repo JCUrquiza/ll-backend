@@ -64,9 +64,30 @@ export class HistoryHairController {
 
         try {
 
-            const allRecordsHair = await prisma.historialCabellerasGanadas.findMany();
+            const allRecordsHair = await prisma.historialCabellerasGanadas.findMany({
+                include: {
+                    luchadorGanador: true
+                }
+            });
 
-            return res.json( allRecordsHair );
+            if ( allRecordsHair.length === 0 ) return res.status(404).json({ error: 'Not records found' });
+
+            const luchadoresVencidosPromise = allRecordsHair.map( record => {
+                return prisma.luchadores.findUnique({
+                    where: { id: record.luchadorVencidoId }
+                });
+            });
+
+            const luchadoresVencidos = await Promise.all( luchadoresVencidosPromise );
+
+            const result = allRecordsHair.map((record, index) => ({
+                id: record.id,
+                fechaLucha: record.fechaLucha,
+                luchadorGanador: record.luchadorGanador,
+                luchadorVencido: luchadoresVencidos[index]
+            }));
+
+            return res.json( result );
         } catch (error) {
             console.log(error);
             return res.status(500).json({ error });
@@ -151,7 +172,6 @@ export class HistoryHairController {
             });
 
             const result = {
-                details: recordDetails,
                 id: recordDetails.id,
                 fechaLucha: recordDetails.fechaLucha,
                 luchadorGanador: recordDetails.luchadorGanador,
