@@ -3,6 +3,7 @@ import { LuchadoresRoutes } from './luchadores/routes';
 import { EmpresasRoutes } from './empresas/routes';
 import { ChampionshipRoutes } from './campeontatos/routes';
 import { HistoryMaskWinsRoutes } from './historialMascaras/routes';
+import { HistoryHairWinsRoutes } from './historialCabelleras/routes';
 
 export class AppRouter {
 
@@ -14,6 +15,7 @@ export class AppRouter {
         router.use('/api/luchadores', LuchadoresRoutes.routes );
         router.use('/api/campeonatos', ChampionshipRoutes.routes );
         router.use('/api/history/mask', HistoryMaskWinsRoutes.routes );
+        router.use('/api/history/hair', HistoryHairWinsRoutes.routes );
 
         return router;
     }
