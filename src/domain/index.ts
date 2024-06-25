@@ -14,5 +14,6 @@ export * from './dtos/historialMascaras/create-historyMask.dto';
 export * from './dtos/historialMascaras/update-historyMask.dto';
 
 export * from './dtos/historialCabelleras/create-historyHair.dto';
+export * from './dtos/historialCabelleras/update-historyHair.dto';
 
 

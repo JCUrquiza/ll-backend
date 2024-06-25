@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
-import { CreateHistoryHairDto } from '../../domain';
+import { CreateHistoryHairDto, UpdateHistoryHairDto } from '../../domain';
 
 
 export class HistoryHairController {
@@ -84,52 +84,35 @@ export class HistoryHairController {
 
         try {
 
-            const idRecord = +req.params.id;
-            if ( isNaN(idRecord) ) return res.status(400).json({ error: `ID argument is not a number` });
+            const id = +req.params.id;
+            const [error, updateHistoryHairDto] = UpdateHistoryHairDto.create({ ...req.body, id });
+            if ( error ) return res.status(400).json({ error });
 
             const recordHair = await prisma.historialCabellerasGanadas.findUnique({
                 where: {
-                    id: idRecord
+                    id: updateHistoryHairDto!.id
                 }
             });
             if ( !recordHair ) return res.status(400).json({ error: 'Record not found' });
-
-            const { luchadorGanadorId, luchadorVencidoId, fechaLucha } = req.body;
-            if ( luchadorGanadorId === luchadorVencidoId ) {
-                return res.status(400).json({ error: 'Incorrect. The Id´s are the same.' });
-            }
-
             const wrestlerWins = await prisma.luchadores.findUnique({
                 where: {
-                    id: +luchadorGanadorId
+                    id: updateHistoryHairDto!.luchadorGanadorId
                 }
             });
             if ( !wrestlerWins ) return res.status(400).json({ error: 'Wrestler wins doesn´t exist' });
-
             const wrestlerLoser = await prisma.luchadores.findUnique({
                 where: {
-                    id: +luchadorVencidoId
+                    id: updateHistoryHairDto!.luchadorVencidoId
                 }
             });
             if ( !wrestlerLoser ) return res.status(400).json({ error: 'Wrestler loser doesn´t exist' });
 
-            let newFechaLucha = fechaLucha;
-            newFechaLucha = new Date(fechaLucha);
-            if ( newFechaLucha.toString() === 'Invalid Date' ) {
-                return res.status(400).json({ error: 'Invalid date' });
-            }
-
             const recordUpdate = await prisma.historialCabellerasGanadas.update({
-                where: { id: idRecord },
-                data: {
-                    luchadorGanadorId: wrestlerWins.id,
-                    luchadorVencidoId: wrestlerLoser.id,
-                    fechaLucha: newFechaLucha
-                }
+                where: { id: updateHistoryHairDto!.id },
+                data: updateHistoryHairDto!.values
             });
 
             return res.json(recordUpdate);
-
         } catch (error) {
             console.log(error);
             return res.status(500).json({ error });
