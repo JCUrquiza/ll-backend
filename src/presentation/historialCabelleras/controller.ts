@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
+import { CreateHistoryHairDto } from '../../domain';
 
 
 export class HistoryHairController {
@@ -10,49 +11,28 @@ export class HistoryHairController {
 
         try {
 
-            const { luchadorGanadorId, luchadorVencidoId, fechaLucha } = req.body;
-
-            if ( luchadorGanadorId === luchadorVencidoId ) {
-                return res.status(400).json({ error: 'Incorrect. The Id´s are the same.' });
-            }
+            const [error, createHistoryDto] = CreateHistoryHairDto.create( req.body );
+            if ( error ) return res.status(400).json({ error });
 
             const wrestlerWins = await prisma.luchadores.findUnique({
                 where: {
-                    id: +luchadorGanadorId
+                    id: createHistoryDto!.luchadorGanadorId
                 }
             });
             if ( !wrestlerWins ) return res.status(400).json({ error: 'Wrestler wins doesn´t exist' });
-
             const wrestlerLoser = await prisma.luchadores.findUnique({
                 where: {
-                    id: +luchadorVencidoId
+                    id: createHistoryDto!.luchadorVencidoId
                 }
             });
             if ( !wrestlerLoser ) return res.status(400).json({ error: 'Wrestler loser doesn´t exist' });
-
-
-            let newFechaLucha = fechaLucha;
-            newFechaLucha = new Date(fechaLucha);
-            if ( newFechaLucha.toString() === 'Invalid Date' ) {
-                return res.status(400).json({ error: 'Invalid date' });
-            }
-
-
             const recordSaved = await prisma.historialCabellerasGanadas.findFirst({
-                where: {
-                    luchadorGanadorId: wrestlerWins.id,
-                    luchadorVencidoId: wrestlerLoser.id,
-                    fechaLucha: newFechaLucha
-                }
+                where: createHistoryDto
             });
             if ( recordSaved ) return res.status(400).json({ error: 'Record previous saved' });
 
             const recordToSave = await prisma.historialCabellerasGanadas.create({
-                data: {
-                    luchadorGanadorId: wrestlerWins.id,
-                    luchadorVencidoId: wrestlerLoser.id,
-                    fechaLucha: newFechaLucha
-                }
+                data: createHistoryDto!
             });
 
             return res.status(201).json({ recordToSave });

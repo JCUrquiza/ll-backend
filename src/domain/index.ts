@@ -13,4 +13,6 @@ export * from './dtos/luchadores/read.wrestler.dto';
 export * from './dtos/historialMascaras/create-historyMask.dto';
 export * from './dtos/historialMascaras/update-historyMask.dto';
 
+export * from './dtos/historialCabelleras/create-historyHair.dto';
+
 
