@@ -122,7 +122,43 @@ export class HistoryHairController {
             });
 
             return res.json(recordUpdate);
-            
+
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error });
+        }
+
+    }
+
+
+    public getDetailsOfRecord = async(req: Request, res: Response) => {
+
+        try {
+
+            const idRecord = +req.params.id;
+            if ( isNaN(idRecord) ) return res.status(400).json({ error: `ID argument is not a number` });
+
+            const recordDetails = await prisma.historialCabellerasGanadas.findUnique({
+                where: { id: idRecord },
+                include: {
+                    luchadorGanador: true
+                }
+            });
+            if ( !recordDetails ) return res.status(400).json({ error: 'Record not found' });
+
+            const detailsOfWrestlerLoser = await prisma.luchadores.findUnique({
+                where: { id: recordDetails.luchadorVencidoId }
+            });
+
+            const result = {
+                details: recordDetails,
+                id: recordDetails.id,
+                fechaLucha: recordDetails.fechaLucha,
+                luchadorGanador: recordDetails.luchadorGanador,
+                luchadorVencido: detailsOfWrestlerLoser
+            }
+
+            return res.json( result );
         } catch (error) {
             console.log(error);
             return res.status(500).json({ error });

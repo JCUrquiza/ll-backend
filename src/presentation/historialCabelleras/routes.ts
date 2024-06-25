@@ -12,6 +12,7 @@ export class HistoryHairWinsRoutes {
         router.post('/create', historyHairWins.createRecordHairWins);
         router.get('/list', historyHairWins.getRecordHairWinsAll);
         router.put('/update/:id', historyHairWins.updateRecordHairWins);
+        router.get('/detail/:id', historyHairWins.getDetailsOfRecord);
 
         return router;
     }
