@@ -17,3 +17,5 @@ export * from './dtos/historialCabelleras/create-historyHair.dto';
 export * from './dtos/historialCabelleras/update-historyHair.dto';
 
 
+
+
