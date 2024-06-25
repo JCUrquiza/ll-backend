@@ -12,6 +12,10 @@ export class HistoryHairController {
 
             const { luchadorGanadorId, luchadorVencidoId, fechaLucha } = req.body;
 
+            if ( luchadorGanadorId === luchadorVencidoId ) {
+                return res.status(400).json({ error: 'Incorrect. The Id´s are the same.' });
+            }
+
             const wrestlerWins = await prisma.luchadores.findUnique({
                 where: {
                     id: +luchadorGanadorId
@@ -111,7 +115,9 @@ export class HistoryHairController {
             if ( !recordHair ) return res.status(400).json({ error: 'Record not found' });
 
             const { luchadorGanadorId, luchadorVencidoId, fechaLucha } = req.body;
-
+            if ( luchadorGanadorId === luchadorVencidoId ) {
+                return res.status(400).json({ error: 'Incorrect. The Id´s are the same.' });
+            }
 
             const wrestlerWins = await prisma.luchadores.findUnique({
                 where: {
@@ -179,6 +185,49 @@ export class HistoryHairController {
             }
 
             return res.json( result );
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error });
+        }
+
+    }
+
+
+    public deleteRecord = async(req: Request, res: Response) => {
+
+        try {
+            
+            const idRecord = +req.params.id;
+            if ( isNaN(idRecord) ) return res.status(400).json({ error: `ID argument is not a number` });
+
+            const deleteRecord = await prisma.historialCabellerasGanadas.delete({
+                where: {
+                    id: idRecord
+                }
+            });
+            if ( !deleteRecord ) return res.status(500).json({ error: 'Something was wrong' });
+
+
+            return res.json({ message: 'Record deleted successfully' });
+
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error });
+        }
+
+    }
+
+
+    public deleteAllRecords = async(req: Request, res: Response) => {
+
+        try {
+
+            const allRecords = await prisma.historialCabellerasGanadas.deleteMany();
+
+            if ( !allRecords ) return res.status(400).json({ error: 'Something was happend' });
+
+            return res.json({ message: 'All records deleted successfully' });
+            
         } catch (error) {
             console.log(error);
             return res.status(500).json({ error });

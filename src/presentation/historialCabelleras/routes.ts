@@ -13,6 +13,8 @@ export class HistoryHairWinsRoutes {
         router.get('/list', historyHairWins.getRecordHairWinsAll);
         router.put('/update/:id', historyHairWins.updateRecordHairWins);
         router.get('/detail/:id', historyHairWins.getDetailsOfRecord);
+        router.delete('/delete/all', historyHairWins.deleteAllRecords);
+        router.delete('/delete/:id', historyHairWins.deleteRecord);
 
         return router;
     }
