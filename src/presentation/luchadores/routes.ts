@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { LuchadoresController } from './controller';
+import { WrestlerDatasourceImpl } from '../../infrastructure/datasource/wrestler.datasource.impl';
+import { WrestlerRepositoryImpl } from '../../infrastructure/repositories/wrestler.repository.impl';
 
 
 export class LuchadoresRoutes {
@@ -7,7 +9,12 @@ export class LuchadoresRoutes {
     static get routes(): Router {
 
         const router = Router();
-        const luchadoresController = new LuchadoresController();
+
+        // Clean Architecture:
+        const datasource = new WrestlerDatasourceImpl();
+        const wrestlerRepository = new WrestlerRepositoryImpl( datasource );
+
+        const luchadoresController = new LuchadoresController( wrestlerRepository );
 
         router.post('/create', luchadoresController.createLuchador);
         router.get('/list', luchadoresController.getLuchadores);

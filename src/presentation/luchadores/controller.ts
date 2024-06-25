@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
-import { CreateWrestlerDto, ReadWrestlerDto, UpdateWrestlerDto } from '../../domain';
+import { CreateWrestlerDto, ReadWrestlerDto, UpdateWrestlerDto, WrestlerRepository } from '../../domain';
 
 
 export class LuchadoresController {
 
-    constructor() {}
+    constructor(
+        private readonly wrestlerRepository: WrestlerRepository
+    ) {}
 
     public createLuchador = async(req: Request, res: Response) => {
 
@@ -71,9 +73,10 @@ export class LuchadoresController {
 
 
     public getLuchadores = async(req: Request, res: Response) => {
-        const luchadores = await prisma.luchadores.findMany();
-        if ( luchadores.length === 0 ) return res.status(404).json({ message: 'No hay luchadores que mostrar' });
+        // const luchadores = await prisma.luchadores.findMany();
+        // if ( luchadores.length === 0 ) return res.status(404).json({ message: 'No hay luchadores que mostrar' });
 
+        const luchadores = await this.wrestlerRepository.getAll();
         return res.json({ luchadores });
     }
 

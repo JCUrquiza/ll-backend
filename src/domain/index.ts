@@ -18,4 +18,9 @@ export * from './dtos/historialCabelleras/update-historyHair.dto';
 
 
 
+export * from './datasources/wrestler.datasource';
+// export * from './dtos'
+export * from './entities/wrestler.entity';
+export * from './repositories/wrestler.repository';
+
 
