@@ -11,7 +11,7 @@ export abstract class WrestlerDatasource {
     abstract getAll(): Promise<WrestlerEntity[]>;
 
     abstract findById( id: number ): Promise<WrestlerEntity>;
-    abstract updateById( updateWre: UpdateWrestlerDto ): Promise<WrestlerEntity>;
+    abstract updateById( updateWrestlerDto: UpdateWrestlerDto ): Promise<WrestlerEntity>;
     abstract deleteById( id: number ): Promise<WrestlerEntity>;
 
 }

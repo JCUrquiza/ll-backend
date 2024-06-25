@@ -73,9 +73,6 @@ export class LuchadoresController {
 
 
     public getLuchadores = async(req: Request, res: Response) => {
-        // const luchadores = await prisma.luchadores.findMany();
-        // if ( luchadores.length === 0 ) return res.status(404).json({ message: 'No hay luchadores que mostrar' });
-
         const luchadores = await this.wrestlerRepository.getAll();
         return res.json({ luchadores });
     }

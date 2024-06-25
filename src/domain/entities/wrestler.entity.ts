@@ -1,3 +1,5 @@
+import { CompanyEntity } from './company.entity';
+
 type Estilo = 'Rudo' | 'Tecnico';
 type Genero = 'Hombre' | 'Mujer';
 
@@ -13,7 +15,7 @@ export class WrestlerEntity {
         public aniosLuchador: number,
         public genero: Genero,
         public debut: Date,
-        public empresaId: number
+        public empresa: CompanyEntity
     ) {}
 
 
@@ -40,12 +42,12 @@ export class WrestlerEntity {
     // }
 
     public static fromObject( object: {[key: string]: any} ): WrestlerEntity {
-        const { id, nombre, estilo, peso, altura, ciudadNacimiento, aniosLuchador, genero, debut, empresaId } = object;
+        const { id, nombre, estilo, peso, altura, ciudadNacimiento, aniosLuchador, genero, debut, empresa } = object;
         if ( !id ) throw 'Id is required';
         if ( !nombre ) throw 'Name is required';
 
         return new WrestlerEntity(
-            id, nombre, estilo, peso, altura, ciudadNacimiento, aniosLuchador, genero, debut, empresaId
+            id, nombre, estilo, peso, altura, ciudadNacimiento, aniosLuchador, genero, debut, empresa
         )
     }
 

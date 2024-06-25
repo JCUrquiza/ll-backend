@@ -1,11 +1,14 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
 import { CreateCompanyDto, UpdateCompanyDto } from '../../domain';
+import { CompanyRepository } from '../../domain/repositories/company.repository';
 
 
 export class EmpresasController {
     
-    constructor() {}
+    constructor(
+        private readonly companyRepository: CompanyRepository
+    ) {}
 
     public createCompany = async(req: Request, res: Response) => {
         const { abreviatura } = req.body;
@@ -29,9 +32,7 @@ export class EmpresasController {
 
 
     public getCompanies = async(req: Request, res: Response) => {
-        const companies = await prisma.empresas.findMany();
-        if ( companies.length === 0 ) return res.status(404).json('No hay empresas que mostrar');
-
+        const companies = await this.companyRepository.getAll();
         return res.json({ empresas: companies });
     }
 
