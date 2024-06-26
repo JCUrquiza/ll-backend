@@ -3,6 +3,7 @@
 export class UpdateCompanyDto {
 
     constructor(
+        public readonly id: number,
         public readonly nombre: string,
         public readonly abreviatura: string,
     ) {}
@@ -17,9 +18,9 @@ export class UpdateCompanyDto {
     }
 
     static create( props: {[key: string]: any} ): [string?, UpdateCompanyDto?] {
-        const { nombre, abreviatura } = props;
+        const { id, nombre, abreviatura } = props;
         
-        return [undefined, new UpdateCompanyDto(nombre, abreviatura)];
+        return [undefined, new UpdateCompanyDto(id, nombre, abreviatura)];
     } 
 
 }

@@ -6,14 +6,27 @@ import { CompanyEntity } from "../../domain/entities/company.entity";
 
 export class CompanyDatasourceImpl implements CompanyDatasource {
 
-    create(createCompanyDto: CreateCompanyDto): Promise<CompanyEntity> {
-        throw new Error("Method not implemented.");
+
+    async create(createCompanyDto: CreateCompanyDto): Promise<CompanyEntity> {
+        const companyExist = await prisma.empresas.findFirst({
+            where: {
+                abreviatura: createCompanyDto.abreviatura
+            }
+        });
+        if ( companyExist ) throw 'Company already exist'
+
+        const newCompany = await prisma.empresas.create({
+            data: createCompanyDto
+        });
+        return CompanyEntity.fromObject( newCompany );
     }
+
 
     async getAll(): Promise<CompanyEntity[]> {
         const companies = await prisma.empresas.findMany();
         return companies.map( company => CompanyEntity.fromObject(company) );
     }
+
 
     async findById(id: number): Promise<CompanyEntity> {
         const company = await prisma.empresas.findUnique({
@@ -23,10 +36,21 @@ export class CompanyDatasourceImpl implements CompanyDatasource {
 
         return CompanyEntity.fromObject(company);
     }
-    
-    updateById(updateCompanyDto: UpdateCompanyDto): Promise<CompanyEntity> {
-        throw new Error("Method not implemented.");
+
+
+    async updateById(updateCompanyDto: UpdateCompanyDto): Promise<CompanyEntity> {
+        await this.findById(updateCompanyDto.id);
+
+        const updateCompany = await prisma.empresas.update({
+            where: { id: updateCompanyDto.id },
+            data: updateCompanyDto.values
+        });
+
+        return CompanyEntity.fromObject( updateCompany );
     }
+
+
+
     deleteById(id: number): Promise<CompanyEntity> {
         throw new Error("Method not implemented.");
     }

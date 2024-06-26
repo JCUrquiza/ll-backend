@@ -11,7 +11,7 @@ export class CompanyRepositoryImpl implements CompanyRepository {
     ) {}
 
     create(createCompanyDto: CreateCompanyDto): Promise<CompanyEntity> {
-        throw new Error('Method not implemented.');
+        return this.datasource.create( createCompanyDto );
     }
 
     getAll(): Promise<CompanyEntity[]> {
@@ -21,10 +21,11 @@ export class CompanyRepositoryImpl implements CompanyRepository {
     findById(id: number): Promise<CompanyEntity> {
         return this.datasource.findById(id);
     }
-    
+
     updateById(updateCompanyDto: UpdateCompanyDto): Promise<CompanyEntity> {
-        throw new Error('Method not implemented.');
+        return this.datasource.updateById( updateCompanyDto );
     }
+    
     deleteById(id: number): Promise<CompanyEntity> {
         throw new Error('Method not implemented.');
     }
