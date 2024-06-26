@@ -24,3 +24,10 @@ export * from './entities/wrestler.entity';
 export * from './repositories/wrestler.repository';
 
 
+// Use Cases
+export * from './use-cases/company/create-company';
+export * from './use-cases/company/delete-company';
+export * from './use-cases/company/get-companies';
+export * from './use-cases/company/get-company';
+export * from './use-cases/company/update-company';
+
