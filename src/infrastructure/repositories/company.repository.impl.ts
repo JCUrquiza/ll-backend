@@ -19,8 +19,9 @@ export class CompanyRepositoryImpl implements CompanyRepository {
     }
 
     findById(id: number): Promise<CompanyEntity> {
-        throw new Error('Method not implemented.');
+        return this.datasource.findById(id);
     }
+    
     updateById(updateCompanyDto: UpdateCompanyDto): Promise<CompanyEntity> {
         throw new Error('Method not implemented.');
     }

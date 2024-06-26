@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
-import { CreateCompanyDto, GetCompanies, GetCompany, UpdateCompanyDto } from '../../domain';
+import { CreateCompanyDto, UpdateCompanyDto } from '../../domain';
 import { CompanyRepository } from '../../domain/repositories/company.repository';
 
 
@@ -31,22 +31,9 @@ export class EmpresasController {
     }
 
 
-    public getCompanies = (req: Request, res: Response) => {
-        new GetCompanies( this.companyRepository )
-            .execute()
-            .then( companies => res.json({ empresas: companies }) )
-            .catch( error => res.status(400).json({ error }) )
-    }
-
-
-    public getCompany = (req: Request, res: Response) => {
-        const id = +req.params.id;
-        if ( isNaN(id) ) return res.status(400).json({ error: `ID argument is not a number` });
-
-        new GetCompany( this.companyRepository )
-            .execute(id)
-            .then( company => res.json(company) )
-            .catch( error => res.status(400).json({ error }) )
+    public getCompanies = async(req: Request, res: Response) => {
+        const companies = await this.companyRepository.getAll();
+        return res.json({ empresas: companies });
     }
 
 

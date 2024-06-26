@@ -15,9 +15,15 @@ export class CompanyDatasourceImpl implements CompanyDatasource {
         return companies.map( company => CompanyEntity.fromObject(company) );
     }
 
-    findById(id: number): Promise<CompanyEntity> {
-        throw new Error("Method not implemented.");
+    async findById(id: number): Promise<CompanyEntity> {
+        const company = await prisma.empresas.findUnique({
+            where: {id}
+        });
+        if ( !company ) throw `Company with id ${id} not found`
+
+        return CompanyEntity.fromObject(company);
     }
+    
     updateById(updateCompanyDto: UpdateCompanyDto): Promise<CompanyEntity> {
         throw new Error("Method not implemented.");
     }
