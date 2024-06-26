@@ -25,9 +25,16 @@ export * from './repositories/wrestler.repository';
 
 
 // Use Cases
+// Company
 export * from './use-cases/company/create-company';
 export * from './use-cases/company/delete-company';
 export * from './use-cases/company/get-companies';
 export * from './use-cases/company/get-company';
 export * from './use-cases/company/update-company';
+// Championship
+export * from './use-cases/championships/create-championship';
+export * from './use-cases/championships/delete-championship';
+export * from './use-cases/championships/get-championship';
+export * from './use-cases/championships/get-championships';
+export * from './use-cases/championships/update-championship';
 

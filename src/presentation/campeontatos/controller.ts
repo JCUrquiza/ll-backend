@@ -1,12 +1,15 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
-import { CreateChampionshipDto, UpdateChampionshipDto } from '../../domain';
+import { CreateChampionshipDto, GetChampionships, UpdateChampionshipDto } from '../../domain';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { ChampionshipRepository } from '../../domain/repositories/championship.repository';
 
 
 export class ChampionshipController {
 
-    constructor() {}
+    constructor(
+        private readonly championshipRepository: ChampionshipRepository
+    ) {}
 
     public createChampionship = async(req: Request, res: Response) => {
 
@@ -30,11 +33,14 @@ export class ChampionshipController {
 
 
     public getChampionships = async(req: Request, res: Response) => {
+        // const championships = await prisma.campeonatos.findMany();
+        // if ( championships.length === 0 ) return res.status(400).json('No hay campeonatos guardados');
+        // return res.json({ championships });
 
-        const championships = await prisma.campeonatos.findMany();
-        if ( championships.length === 0 ) return res.status(400).json('No hay campeonatos guardados');
-
-        return res.json({ championships })
+        new GetChampionships( this.championshipRepository )
+            .execute()
+            .then( championships => res.json({ campeonatos: championships }) )
+            .catch( error => res.status(400).json({ error }) )
     }
 
 

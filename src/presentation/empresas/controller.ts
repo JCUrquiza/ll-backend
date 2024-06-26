@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { prisma } from '../../data/postgres';
 import { CreateCompany, CreateCompanyDto, DeleteCompany, GetCompanies, GetCompany, UpdateCompany, UpdateCompanyDto } from '../../domain';
 import { CompanyRepository } from '../../domain/repositories/company.repository';
 
