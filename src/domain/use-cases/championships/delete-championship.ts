@@ -6,7 +6,7 @@ export interface DeleteChampionshipUseCase {
     execute(id: number): Promise<ChampionshipEntity>
 }
 
-export class DeleteChampionship implements DeleteChampionshipUseCase{
+export class DeleteChampionship implements DeleteChampionshipUseCase {
 
     constructor(
         private readonly repository: ChampionshipRepository

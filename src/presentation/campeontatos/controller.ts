@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../data/postgres';
-import { CreateChampionshipDto, GetChampionships, UpdateChampionshipDto } from '../../domain';
+import { CreateChampionshipDto, DeleteChampionship, GetChampionships, UpdateChampionshipDto } from '../../domain';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ChampionshipRepository } from '../../domain/repositories/championship.repository';
 
@@ -73,24 +73,13 @@ export class ChampionshipController {
 
 
     public deleteChampionship = async(req: Request, res: Response) => {
+        const id = +req.params.id;
+        if ( isNaN(id) ) return res.status(400).json({ error: `ID argument is not a number` });
 
-        try {
-            const id = +req.params.id;
-            if ( isNaN(id) ) return res.status(400).json({ error: `ID argument is not a number` });
-
-            await prisma.campeonatos.delete({
-                where: { id }
-            });
-            
-            return res.json({ message: 'Championship successfully deleted' });
-        } catch (error) {
-            if ( (error as PrismaClientKnownRequestError).code === 'P2025' ) {
-                return res.status(400).json({ error: 'Championship not found' });
-            }
-            
-            return res.status(500).json({ error: 'Contacte al administrador' });
-        }
-
+        new DeleteChampionship( this.championshipRepository )
+            .execute(id)
+            .then( championshipDeleted => res.json({ deleted: championshipDeleted }) )
+            .catch( error => res.status(400).json(error) )
     }
 
 

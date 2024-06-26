@@ -13,17 +13,20 @@ export class ChampionshipRepositoryImpl implements ChampionshipRepository {
     create(createCompanyDto: CreateChampionshipDto): Promise<ChampionshipEntity> {
         throw new Error('Method not implemented.');
     }
+
     getAll(): Promise<ChampionshipEntity[]> {
         return this.datasource.getAll();
     }
+    
     findById(id: number): Promise<ChampionshipEntity> {
         throw new Error('Method not implemented.');
     }
     updateById(updateCompanyDto: UpdateChampionshipDto): Promise<ChampionshipEntity> {
         throw new Error('Method not implemented.');
     }
+
     deleteById(id: number): Promise<ChampionshipEntity> {
-        throw new Error('Method not implemented.');
+        return this.datasource.deleteById(id);
     }
 
 }
