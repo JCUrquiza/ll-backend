@@ -23,11 +23,11 @@ export class CompanyRepositoryImpl implements CompanyRepository {
     }
 
     updateById(updateCompanyDto: UpdateCompanyDto): Promise<CompanyEntity> {
-        return this.datasource.updateById( updateCompanyDto );
+        return this.datasource.updateById(updateCompanyDto);
     }
     
     deleteById(id: number): Promise<CompanyEntity> {
-        throw new Error('Method not implemented.');
+        return this.datasource.deleteById(id);
     }
 
 }

@@ -50,9 +50,14 @@ export class CompanyDatasourceImpl implements CompanyDatasource {
     }
 
 
+    async deleteById(id: number): Promise<CompanyEntity> {
+        await this.findById(id);
 
-    deleteById(id: number): Promise<CompanyEntity> {
-        throw new Error("Method not implemented.");
+        const deleteCompany = await prisma.empresas.delete({
+            where: { id }
+        });
+
+        return CompanyEntity.fromObject( deleteCompany );
     }
 
 }
